@@ -9,7 +9,7 @@
     "watch": "rollup --watch --config rollup.config.dev.js"
   },
   "dependencies": {
-    "phaser": "^3.22.0"
+    "phaser": "^3.55.2"
   },
   "devDependencies": {
     "@rollup/plugin-replace": "^2.3.0",
