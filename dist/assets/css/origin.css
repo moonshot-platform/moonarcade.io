@@ -3,6 +3,31 @@
     padding: 0;
 }
 
-html, body {
+html {
     overflow: hidden;
 }
+
+body {
+    margin: 0;
+    overflow: hidden;
+    background-color: rgb(47, 52, 55);
+  }
+  
+  .container {
+    display: block;
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 800px;
+  }
+  
+  #SpaceInvaders {
+    min-height: 300px;
+  }
+  
+  #SpaceInvaders canvas {
+    z-index: 2;
+  }
+  
