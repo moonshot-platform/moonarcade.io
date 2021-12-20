@@ -104,9 +104,9 @@ export class MoonshoterScene extends Phaser.Scene {
         let playerBody = this.player.body as Phaser.Physics.Arcade.Body;
         playerBody.setVelocity(0, 0);
         if (this.cursors.left.isDown) {
-            playerBody.setVelocityX(-200);
+            playerBody.setVelocityX(-500);
         } else if (this.cursors.right.isDown) {
-            playerBody.setVelocityX(200);
+            playerBody.setVelocityX(500);
         }
 
         if (this.fireKey.isDown) {
