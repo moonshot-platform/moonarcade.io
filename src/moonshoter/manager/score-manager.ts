@@ -1,4 +1,3 @@
-import Phaser from "phaser";
 import { AssetType } from "../interface/assets";
 
 export class ScoreManager {
