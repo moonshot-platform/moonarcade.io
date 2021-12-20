@@ -27,7 +27,7 @@ export class MoonshoterScene extends Phaser.Scene {
 
     constructor() {
         super({
-            key: "MainScene",
+            key: "MoonshoterScene",
         });
     }
 
@@ -87,14 +87,14 @@ export class MoonshoterScene extends Phaser.Scene {
         this.physics.overlap(
             this.assetManager.bullets,
             this.alienManager.aliens,
-            () => this._bulletHitAliens,
+            this._bulletHitAliens,
             null,
             this
         );
         this.physics.overlap(
             this.alienManager.aliens,
             this.player,
-            () => this._enemyHitPlayer,
+            this._enemyHitPlayer,
             null,
             this
         );
