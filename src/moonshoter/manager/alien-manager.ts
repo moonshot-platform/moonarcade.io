@@ -25,8 +25,8 @@ export class AlienManager {
         var enemy: Phaser.Physics.Arcade.Sprite;
 
         enemy = this.aliens.create(
-            Phaser.Math.RND.integerInRange(1, window.screen.availWidth),
-            10
+            Phaser.Math.RND.integerInRange(30, window.screen.availWidth - 50),
+            -30
         );
         enemy.setOrigin(0.5, 0.5);
         enemy.play(AnimationType.Fly)
@@ -36,9 +36,7 @@ export class AlienManager {
         //console.log(this.aliens.children.size);
         setTimeout(() => {
             this.generateEnemy();
-
-            //this._sortAliens();
-        }, 2000);
+        }, 750);
 
     }
 
@@ -68,11 +66,11 @@ export class AlienManager {
                 })
 
                 alien.setVelocityY(this.alienVelocity);
-                if (alien.y > window.screen.height) {
+                if (alien.y > window.screen.height - 10) {
                     alien.destroy(true);
                     alien = null;
                     //this.aliens.children.delete(alien);
-                    console.log("DESTROYED!");
+                    //console.log("DESTROYED!");
                 }
             }
         })
