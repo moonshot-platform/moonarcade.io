@@ -27,7 +27,7 @@ export class MoonshoterScene extends Phaser.Scene {
     cursors: Phaser.Types.Input.Keyboard.CursorKeys;
     fireKey: Phaser.Input.Keyboard.Key;
     isEnemyAvailableToFire: boolean = false;
-    isEnemyAvailableToMove: boolean = true;
+    isEnemyAvailableToMove: boolean = false;
 
     constructor() {
         super({
