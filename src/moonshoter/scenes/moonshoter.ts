@@ -200,7 +200,14 @@ export class MoonshoterScene extends Phaser.Scene {
         }
     }
 
+    private _moveRandomEnemy() {
+        let randomEnemy = this.alienManager.getRandomAliveEnemy();
 
+        if (randomEnemy) {
+            this.physics.moveToObject(randomEnemy, this.player, 100);
+            this.enemyMoveTimer = this.time.now + 500;
+        }
+    }
 
     private _enemyFires() {
         if (!this.player.active) {
