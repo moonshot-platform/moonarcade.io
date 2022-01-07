@@ -11,6 +11,7 @@ import { Alien } from "../sprites/alien";
 import { Kaboom } from "../sprites/kaboom";
 import { ScoreManager } from "../manager/score-manager";
 import { GameState } from "../interface/game-state";
+import { EnemyBullet } from "../sprites/enemy-bullet";
 
 export class MoonshoterScene extends Phaser.Scene {
     state: GameState;
@@ -19,11 +20,14 @@ export class MoonshoterScene extends Phaser.Scene {
     scoreManager: ScoreManager;
     bulletTime = 0;
     firingTimer = 0;
+    enemyMoveTimer = 0;
     starfield: Phaser.GameObjects.TileSprite;
     player: Phaser.Physics.Arcade.Sprite;
     alienManager: AlienManager;
     cursors: Phaser.Types.Input.Keyboard.CursorKeys;
     fireKey: Phaser.Input.Keyboard.Key;
+    isEnemyAvailableToFire: boolean = false;
+    isEnemyAvailableToMove: boolean = true;
 
     constructor() {
         super({
@@ -75,13 +79,28 @@ export class MoonshoterScene extends Phaser.Scene {
                     break;
             }
         })
+
+        if (window.DeviceMotionEvent) {
+            window.addEventListener('deviceorientation', this.handleOrientation, true);
+            window.addEventListener('devicemotion', this.handleOrientation, true);
+        } else {
+            alert("devicemotion not supported on your device or browser.");
+        }
+
     }
 
     update() {
+
         this.starfield.tilePositionY -= 1;
+
         this._shipKeyboardHandler();
-        if (this.time.now > this.firingTimer) {
-            //this._enemyFires();
+
+        if (this.time.now > this.firingTimer && this.isEnemyAvailableToFire) {
+            this._enemyFires();
+        }
+
+        if (this.time.now > this.enemyMoveTimer && this.isEnemyAvailableToMove) {
+            this._moveRandomEnemy();
         }
 
         this.physics.overlap(
@@ -98,6 +117,19 @@ export class MoonshoterScene extends Phaser.Scene {
             null,
             this
         );
+
+        this.physics.overlap(
+            this.assetManager.enemyBullets,
+            this.player,
+            this._enemyBulletHitPlayer,
+            null,
+            this
+        );
+    }
+
+    handleOrientation(e: any) {
+        // let playerBody = this.player.body as Phaser.Physics.Arcade.Body;
+        console.log(e.acceleration.x);
     }
 
     private _shipKeyboardHandler() {
@@ -125,12 +157,25 @@ export class MoonshoterScene extends Phaser.Scene {
             // this.state = GameState.Win;
         }
         if (this.scoreManager.score > 1500) {
+
             this.alienManager.alienVelocity = 500;
+
         } else if (this.scoreManager.score > 1000) {
+
+            if (!this.isEnemyAvailableToFire)
+                this.isEnemyAvailableToFire = true;
+
             this.alienManager.alienVelocity = 400;
+
         } else if (this.scoreManager.score > 500) {
+
+            if (!this.isEnemyAvailableToMove)
+                this.isEnemyAvailableToMove = true;
+
             this.alienManager.alienVelocity = 300;
+
         } else if (this.scoreManager.score > 300) {
+
             this.alienManager.alienVelocity = 200;
 
         }
@@ -156,18 +201,45 @@ export class MoonshoterScene extends Phaser.Scene {
     }
 
 
-    // private _enemyFires() {
-    //     if (!this.player.active) {
-    //         return;
-    //     }
-    //     let enemyBullet: EnemyBullet = this.assetManager.enemyBullets.get();
-    //     let randomEnemy = this.alienManager.getRandomAliveEnemy();
-    //     if (enemyBullet && randomEnemy) {
-    //         enemyBullet.setPosition(randomEnemy.x, randomEnemy.y);
-    //         this.physics.moveToObject(enemyBullet, this.player, 120);
-    //         this.firingTimer = this.time.now + 2000;
-    //     }
-    // }
+
+    private _enemyFires() {
+        if (!this.player.active) {
+            return;
+        }
+
+        let enemyBullet: EnemyBullet = this.assetManager.enemyBullets.get();
+        let randomEnemy = this.alienManager.getRandomAliveEnemy();
+
+        if (enemyBullet && randomEnemy) {
+            if (randomEnemy.y > window.screen.availHeight - 500) {
+                return;
+            } else {
+                enemyBullet.setPosition(randomEnemy.x, randomEnemy.y);
+                this.physics.moveToObject(enemyBullet, this.player, 100);
+                this.firingTimer = this.time.now + 1500;
+            }
+        }
+    }
+
+    private _enemyBulletHitPlayer(ship, enemyBullet: EnemyBullet) {
+        let explosion: Kaboom = this.assetManager.explosions.get();
+        enemyBullet.kill();
+        let live: Phaser.GameObjects.Sprite = this.scoreManager.lives.getFirstAlive();
+        if (live) {
+            live.setActive(false).setVisible(false);
+        }
+
+        explosion.setPosition(this.player.x, this.player.y);
+        explosion.play(AnimationType.Kaboom);
+        this.sound.play(SoundType.Kaboom)
+        if (this.scoreManager.noMoreLives) {
+            this.scoreManager.setGameOverText();
+            this.assetManager.gameOver();
+            this.state = GameState.GameOver;
+            this.player.disableBody(true, true);
+        }
+    }
+
 
     private _fireBullet() {
         if (!this.player.active) {
