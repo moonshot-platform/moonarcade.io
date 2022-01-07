@@ -40,6 +40,12 @@ export class AlienManager {
 
     }
 
+    getRandomAliveEnemy(): Alien {
+        let random = Phaser.Math.RND.integerInRange(1, this.aliens.children.size);
+        let aliens = this.aliens.children.getArray() as Alien[];
+        return aliens[random];
+    }
+
     reset() {
         this.aliens.clear(true, true);
         this._animate();
