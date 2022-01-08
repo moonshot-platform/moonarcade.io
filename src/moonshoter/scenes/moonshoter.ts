@@ -59,14 +59,23 @@ export class MoonshoterScene extends Phaser.Scene {
     create() {
         this.state = GameState.Playing;
         this.starfield = this.add
-            .tileSprite(0, 0, window.innerWidth, window.innerHeight, AssetType.Starfield)
+            .tileSprite(
+                0,
+                0,
+                window.innerWidth,
+                window.innerHeight,
+                AssetType.Starfield
+            )
             .setOrigin(0, 0);
+
         this.assetManager = new AssetManager(this);
         this.animationFactory = new AnimationFactory(this);
+
         this.cursors = this.input.keyboard.createCursorKeys();
         this.fireKey = this.input.keyboard.addKey(
             Phaser.Input.Keyboard.KeyCodes.SPACE
         );
+
         this.player = Ship.create(this);
         this.alienManager = new AlienManager(this);
         this.scoreManager = new ScoreManager(this);
@@ -204,7 +213,7 @@ export class MoonshoterScene extends Phaser.Scene {
         let randomEnemy = this.alienManager.getRandomAliveEnemy();
 
         if (randomEnemy) {
-            this.physics.moveToObject(randomEnemy, this.player, 100);
+            this.physics.moveToObject(randomEnemy, this.player, 200);
             this.enemyMoveTimer = this.time.now + 500;
         }
     }
@@ -222,7 +231,7 @@ export class MoonshoterScene extends Phaser.Scene {
                 return;
             } else {
                 enemyBullet.setPosition(randomEnemy.x, randomEnemy.y);
-                this.physics.moveToObject(enemyBullet, this.player, 100);
+                this.physics.moveToObject(enemyBullet, this.player, 600);
                 this.firingTimer = this.time.now + 1500;
             }
         }
